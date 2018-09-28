@@ -251,11 +251,11 @@ function setAvailableFieldsMetadata(target: any, dest: Array<any> = []) {
     if (!target) {
         return dest;
     }   
-    let proto = target.__proto__;
+    let proto = Object.getPrototypeOf(target);
     if (!proto) {
         return dest;
     }
-    while (proto.constructor && proto.constructor.name !== 'Object') {    
+    while (proto && proto.constructor && proto.constructor.name !== 'Object') {    
         /**
          * Извлекаем ключ конструктора у каждого из прототипов он уникален
          */

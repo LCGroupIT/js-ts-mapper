@@ -49,3 +49,8 @@ export class UtilTestTools {
     return out;
   }
 }
+
+
+function getControlSumm(entity) {
+    return Array.prototype.map.call(JSON.stringify(entity), p => p.charCodeAt()).reduce((a, b) => a + b, 0);
+}

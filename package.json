@@ -1,6 +1,6 @@
 {
     "name": "js-ts-mapper",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Mapping json object to Typescript class",
     "main": "js-ts-mapper.js",
     "scripts": {
@@ -13,7 +13,7 @@
         "add:changelog": "git add --force CHANGELOG.md package.json",
         "commit:changelog": "git commit -m \"Updated CHANGELOG.md\"",
         "push:changelog": "git push",
-        "preversion": "npm run clean && npm run compile && npm run test",
+        "preversion": "npm run test && npm run clean && npm run compile",
         "version": "npx conventional-changelog -p angular -i CHANGELOG.md -s -r && npm run copy:assets && npm run add:changelog && npm run commit:changelog",
         "postversion": "npm run push:changelog && npm publish dist"
     },
@@ -57,6 +57,7 @@
         "karma": "^2.0.5",
         "karma-chrome-launcher": "^2.2.0",
         "karma-coverage": "^1.1.2",
+        "karma-ie-launcher": "^1.0.0",
         "karma-jasmine": "^1.1.2",
         "karma-sourcemap-loader": "^0.3.7",
         "karma-spec-reporter": "^0.0.32",

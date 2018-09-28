@@ -1,17 +1,21 @@
-var webpack = require('webpack');
 var path = require('path');
 var tsconfig = require('./tsconfig.spec.json');
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
-        browsers: ['Chrome'],
+        browsers: ['Chrome', 'IE10'],
         colors: true,
         coverageReporter: {
             dir: './',
-            reporters: [
-                { type: 'lcov', subdir: 'coverage' }
-            ]
+            reporters: [{
+                type: 'lcov',
+                subdir: 'coverage'
+            }]
         },
         customLaunchers: {
+            IE10: {
+                base: 'IE',
+                'x-ua-compatible': 'IE=EmulateIE10'
+            },
             Chrome_travis_ci: {
                 base: 'Chrome',
                 flags: ['--no-sandbox']
