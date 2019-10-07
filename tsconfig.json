@@ -7,18 +7,10 @@
         "sourceMap": true,
         "declaration": true,
         "baseUrl": "./",
-        "lib": [
-            "dom",
-            "es2017"
-        ],        
-        "typeRoots": [ 
-            "node_modules/@types"
-        ]
+        "lib": ["dom", "es2017"],
+        "typeRoots": ["node_modules/@types"]
     },
-    "include": [
-        "src/**/*"
-    ],
-    "paths": { 
+    "paths": {
         "ts-mapper": ["src/index"]
     }
 }

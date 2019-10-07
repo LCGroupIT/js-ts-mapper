@@ -1,8 +1,9 @@
-import { AvailableFieldsMetadataKey, ServerNameMetadataKey, IgnoreUndecoratedPropertyKey } from './config';
-import { FieldProperty } from './field-property';
+import { AvailableFieldsMetadataKey, IgnoreUndecoratedPropertyKey, DeserializeNullValue, ServerNameMetadataKey } from './config';
 import { getHash } from './decorators';
+import { FieldProperty } from './field-property';
 
 const ignoreUndecoratedPropertyDefault = false;
+const deserializeNullValueDefault = false;
 /**
  * Класс реализующий маппинг
  */
@@ -62,23 +63,6 @@ export class JsTsMapper {
             const propType = Reflect.getMetadata('design:type', target, field.name);
             let hash = getHash(propType.prototype.constructor);
             const propTypeServerFields = Reflect.getMetadata(AvailableFieldsMetadataKey, propType.prototype, hash) as [FieldProperty];
-
-            // if (clientVal instanceof Array) {
-            //     serverVal = this.serializeArray<T>(clientVal);
-            //     serverObj[serverName] = serverVal;
-            // } else {
-            //     if (clientVal && propTypeServerFields) {
-            //         serverVal = this.serialize<T>(clientVal);
-            //     } else {
-            //         serverVal = clientVal;
-            //     }
-
-            //     if (field.converter) {
-            //         serverObj[serverName] = field.converter.serialize(serverVal);
-            //     } else {
-            //         serverObj[serverName] = serverVal;
-            //     }
-            // }
 
             if (clientVal && propTypeServerFields) {
                 serverVal = this.serialize<T>(clientVal);
@@ -160,6 +144,14 @@ export class JsTsMapper {
             ignoreUndecoratedProp = ignoreUndecoratedPropertyDefault;
         }
 
+        /**
+         *  Извлекаем флаг, нужно ли маппить Null value ил конвертировать его в undefined
+         */
+        let deserializeNullValue = Reflect.getMetadata(DeserializeNullValue, target.constructor);
+        if (typeof deserializeNullValue !== 'boolean') {
+            deserializeNullValue = deserializeNullValueDefault;
+        }
+
         if (ignoreUndecoratedProp === false) {
             Object.assign<T, Object>(clientObj, obj);
         }
@@ -194,33 +186,6 @@ export class JsTsMapper {
              * Получаем конструктор класса
              */
             const propType = Reflect.getMetadata('design:type', target, field.name);
-            // if (propType === Array) {
-            //     clientVal = this.deserializeArray(serverVal, field);
-            // } else {
-            //     /**
-            //      * Смотрим, есть ли в метаданных класса информация о свойствах
-            //      */
-            //     let hash = getHash(propType.prototype.constructor);
-            //     const propTypeServerFields = Reflect.getMetadata(AvailableFieldsMetadataKey, propType.prototype, hash) as [FieldProperty];
-            //     if (propTypeServerFields) {
-            //         /**
-            //          * Да, класс использует наш декоратор, обрабатываем свойство рекурсивно
-            //          */
-            //         clientVal = this.deserialize(serverVal, propType);
-            //     } else {
-            //         /**
-            //          * Проверяем, есть ли кастомный конвертер, если есть, то преобразовываем значение
-            //          */
-            //         if (field.converter) {
-            //             clientVal = field.converter.deserialize(serverVal);
-            //         } else {
-            //             clientVal = serverVal;
-            //         }
-            //     }
-            //     /**
-            //      * Записываем результирующее значение
-            //      */
-            // }            
 
             /**
              * Смотрим, есть ли в метаданных класса информация о свойствах
@@ -243,7 +208,7 @@ export class JsTsMapper {
                         clientVal = this.deserializeArray(serverVal, field);
                     } else {
                         clientVal = serverVal;
-                    }                    
+                    }
                 }
             }
 
@@ -253,7 +218,7 @@ export class JsTsMapper {
             if (field.name !== serverName && ignoreUndecoratedProp === false) {
                 delete clientObj[serverName];
             }
-            clientObj[field.name] = clientVal;
+            clientObj[field.name] = clientVal === null ? (deserializeNullValue ? null : undefined) : clientVal;
         });
         return clientObj;
     }

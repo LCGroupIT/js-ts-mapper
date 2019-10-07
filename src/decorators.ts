@@ -1,7 +1,14 @@
 import 'reflect-metadata';
-import { ServerNameMetadataKey, AvailableFieldsMetadataKey, IgnoreUndecoratedPropertyKey, HashPropertyKey } from './config';
-import { JsTsCustomConvert, BaseJsTsCustomConvert } from './interface';
+
+import {
+    AvailableFieldsMetadataKey,
+    DeserializeNullValue,
+    HashPropertyKey,
+    IgnoreUndecoratedPropertyKey,
+    ServerNameMetadataKey,
+} from './config';
 import { FieldProperty } from './field-property';
+import { BaseJsTsCustomConvert, JsTsCustomConvert } from './interface';
 
 /**
  * Декоратор с помощью которого объявляем, свойство дял маппинга
@@ -41,30 +48,7 @@ export function JsonProperty(name?: string, customConverter?: { new (): BaseJsTs
          * Регистрируем текущее поле в метаданных
          */
         let field: FieldProperty;
-        const propType = Reflect.getMetadata('design:type', target, propertyKey);
-        /**
-         * Если массив, то смотрим какого типа этот массив
-         */
-        // if (propType === Array) {
-        //     field = new FieldProperty(propertyKey, customConverter ? (customConverter[0] ? customConverter[0] : undefined) : undefined);
-        // } else {
-        //     /**
-        //      * Проверяем передан ли класс конвертера значения.
-        //      */
-        //     if (customConverter && typeof customConverter === 'function') {
-        //         const converter = new customConverter() as JsTsCustomConvert<any>;
-        //         /**
-        //          * Проверяем, что он реализует интерфейс кастомного конвертера
-        //          */
-        //         if (typeof converter.serialize === 'function' && typeof converter.deserialize === 'function') {
-        //             field = new FieldProperty(propertyKey, undefined, converter);
-        //         } else  {
-        //             field = new FieldProperty(propertyKey, customConverter);
-        //         }
-        //     } else {
-        //         field = new FieldProperty(propertyKey);
-        //     }
-        // }
+        const propType = Reflect.getMetadata('design:type', target, propertyKey);        
 
         /**
          * Проверяем передан ли класс конвертера значения.
@@ -102,6 +86,18 @@ export function SerializeOnlyDecorated() {
          * Отправляем в метаданные флаг о том, что сериализации в контексте класса подвергаются только декарированные свойства
          */
         Reflect.defineMetadata(IgnoreUndecoratedPropertyKey, true, target);
+    };
+}
+
+/**
+ * Декоратор для сериализации Null значений как есть, иначе он превращается в undefined
+ */
+export function DeserializeNullValueDecorated() {
+    return (target: Object) => {
+        /**
+         * Отправляем в метаданные флаг о том, что сериализации в контексте класса подвергаются только декарированные свойства
+         */
+        Reflect.defineMetadata(DeserializeNullValue, true, target);
     };
 }
 
