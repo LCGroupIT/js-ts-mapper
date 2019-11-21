@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/LCGroupIT/js-ts-mapper/compare/v1.0.4...v1.1.1) (2019-11-21)
+
+
+### Bug Fixes
+
+* imported ([01a14b4](https://github.com/LCGroupIT/js-ts-mapper/commit/01a14b4))
+
+
+
 ## [1.1.1](https://github.com/LCGroupIT/js-ts-mapper/compare/v1.0.4...v1.1.1) (2019-06-26)
 
 
